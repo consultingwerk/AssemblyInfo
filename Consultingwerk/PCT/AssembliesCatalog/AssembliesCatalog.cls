@@ -68,28 +68,33 @@ CLASS Consultingwerk.PCT.AssembliesCatalog.AssembliesCatalog:
     METHOD PROTECTED VOID AddProperties (poType AS System.Type,
                                          poJson AS JsonObject):
 
-        DEFINE VARIABLE oPropertiesJson AS JsonObject                         NO-UNDO .
-        DEFINE VARIABLE oPropertyJson   AS JsonObject                         NO-UNDO .
-        DEFINE VARIABLE oProperties     AS "System.Reflection.PropertyInfo[]" NO-UNDO .
+        DEFINE VARIABLE oInstancePropertiesJson AS JsonArray                          NO-UNDO .
+        DEFINE VARIABLE oStaticPropertiesJson   AS JsonArray                          NO-UNDO .
+        DEFINE VARIABLE oProperties             AS "System.Reflection.PropertyInfo[]" NO-UNDO .
 
-        oProperties = poType:GetProperties() .
+        oProperties = poType:GetProperties () .
 
-        {Consultingwerk/foreach.i System.Reflection.PropertyInfo oProperty IN oProperties '' propertyloop}
-            IF NOT VALID-OBJECT (oPropertiesJson) THEN
-                oPropertiesJson = NEW JsonObject () .
+        {Consultingwerk/foreach.i System.Reflection.PropertyInfo oProperty in oProperties '' propertyloop}
 
-            IF oPropertiesJson:Has (oProperty:Name) THEN
-                NEXT propertyloop .
+            IF CAST (oProperty:GetAccessors(TRUE):GetValue(0), System.Reflection.MethodInfo):IsStatic THEN DO:
+                IF NOT VALID-OBJECT (oStaticPropertiesJson) THEN
+                    oStaticPropertiesJson = NEW JsonArray () .
 
-            oPropertyJson = NEW JsonObject () .
-            oPropertyJson:Add ("Static":U, CAST (oProperty:GetAccessors(TRUE):GetValue(0), System.Reflection.MethodInfo):IsStatic) .
-            oPropertyJson:Add ("Type":U, oProperty:PropertyType:FullName) .
+                oStaticPropertiesJson:Add (oProperty:Name) .
+            END.
+            ELSE DO:
+                IF NOT VALID-OBJECT (oInstancePropertiesJson) THEN
+                    oInstancePropertiesJson = NEW JsonArray () .
 
-            oPropertiesJson:Add (oProperty:Name, oPropertyJson) .
+                oInstancePropertiesJson:Add (oProperty:Name) .
+            END.
         END.
 
-        IF VALID-OBJECT (oPropertiesJson) THEN
-            poJson:Add ("Properties":U, oPropertiesJson) .
+        IF VALID-OBJECT (oInstancePropertiesJson) THEN
+            poJson:Add ("Properties":U, oInstancePropertiesJson) .
+
+        IF VALID-OBJECT (oStaticPropertiesJson) THEN
+            poJson:Add ("StaticProperties":U, oStaticPropertiesJson) .
 
     END METHOD.
 
@@ -261,4 +266,5 @@ CLASS Consultingwerk.PCT.AssembliesCatalog.AssembliesCatalog:
         RETURN oMethodsJson .
 
     END METHOD.
+
 END CLASS.
