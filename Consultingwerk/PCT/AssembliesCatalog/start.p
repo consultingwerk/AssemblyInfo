@@ -31,7 +31,7 @@
 
 BLOCK-LEVEL ON ERROR UNDO, THROW.
 
-USING Consultingwerk.Proparse.AssembliesCatalog.* FROM PROPATH.
+USING Consultingwerk.PCT.AssembliesCatalog.* FROM PROPATH.
 USING Consultingwerk.Studio.AssemblyParser.* FROM PROPATH.
 USING Progress.Json.ObjectModel.*            FROM PROPATH.
 

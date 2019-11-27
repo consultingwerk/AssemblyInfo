@@ -29,7 +29,7 @@ BLOCK-LEVEL ON ERROR UNDO, THROW.
 USING Progress.Json.ObjectModel.* FROM PROPATH .
 USING Progress.Lang.*             FROM PROPATH .
 
-CLASS Consultingwerk.Proparse.AssembliesCatalog.AssembliesCatalog:
+CLASS Consultingwerk.PCT.AssembliesCatalog.AssembliesCatalog:
 
     /**
      * Purpose: Processes the base types
