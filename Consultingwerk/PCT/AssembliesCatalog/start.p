@@ -49,6 +49,15 @@ DEFINE VARIABLE oJson    AS JsonArray         NO-UNDO .
 oParser = NEW AssemblyParser() .
 oParser:GetTable (OUTPUT TABLE ttAssemblies) .
 
+IF NOT CAN-FIND (ttAssemblies WHERE ttAssemblies.AssemblyName = "mscorlib":U) THEN DO:
+    CREATE ttAssemblies.
+    ASSIGN ttAssemblies.AssemblyEntry  = "mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089":U
+           ttAssemblies.AssemblyName   = "mscorlib":U
+           ttAssemblies.Culture        = "neutral":U
+           ttAssemblies.PublicKeyToken = "b77a5c561934e089":U
+           ttAssemblies.Version        = "4.0.0.0":U .
+END.
+
 oJson = NEW JsonArray () .
 
 oCatalog = NEW AssembliesCatalog() .
