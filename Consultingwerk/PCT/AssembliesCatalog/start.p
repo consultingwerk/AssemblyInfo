@@ -35,12 +35,12 @@ USING Consultingwerk.PCT.AssembliesCatalog.* FROM PROPATH.
 USING Consultingwerk.Studio.AssemblyParser.* FROM PROPATH.
 USING Progress.Json.ObjectModel.*            FROM PROPATH.
 
-DEFINE INPUT  PARAMETER pcOutputFileName AS CHARACTER NO-UNDO.
-/*DEFINE VARIABLE pcOutputFileName AS CHARACTER NO-UNDO INITIAL "c:\temp\assemblies.json":U .*/
+//DEFINE INPUT  PARAMETER pcOutputFileName AS CHARACTER NO-UNDO.
+DEFINE VARIABLE pcOutputFileName AS CHARACTER NO-UNDO INITIAL "c:\temp\assemblies.json":U .
 
 DEFINE VARIABLE oParser  AS AssemblyParser    NO-UNDO .
 DEFINE VARIABLE oCatalog AS AssembliesCatalog NO-UNDO .
-DEFINE VARIABLE oJson    AS JsonObject        NO-UNDO .
+DEFINE VARIABLE oJson    AS JsonArray         NO-UNDO .
 
 {Consultingwerk/Studio/AssemblyParser/ttAssemblies.i}
 
@@ -49,15 +49,17 @@ DEFINE VARIABLE oJson    AS JsonObject        NO-UNDO .
 oParser = NEW AssemblyParser() .
 oParser:GetTable (OUTPUT TABLE ttAssemblies) .
 
-oJson = NEW JsonObject () .
+oJson = NEW JsonArray () .
 
 oCatalog = NEW AssembliesCatalog() .
 
 FOR EACH ttAssemblies:
-    DISPLAY ttAssemblies.AssemblyEntry FORMAT "x(70)" .
+    DISPLAY ttAssemblies.AssemblyEntry FORMAT "x(70)" WITH DOWN .
+    PROCESS EVENTS .
 
     oCatalog:AddTypesFromAssembly (ttAssemblies.AssemblyEntry, oJson) .
 
+    DOWN .
     PAUSE 0 BEFORE-HIDE .
 END.
 
